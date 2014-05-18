@@ -56,15 +56,16 @@ void stepper_init(void)
 {
   STEPPER_PORT &= ~(0xF << STEPPER_FIRST_BIT | 1<<STEPPER_ENABLE_A_BIT | 1<<STEPPER_ENABLE_B_BIT);
   STEPPER_DDR |= (0xF << STEPPER_FIRST_BIT) | (1<<STEPPER_ENABLE_A_BIT) | (1<<STEPPER_ENABLE_B_BIT);
+  stepper_stop();
 }
 
 void stepper_start(void)
 {
   STEPPER_PORT |= (1<<STEPPER_ENABLE_A_BIT) | (1<<STEPPER_ENABLE_B_BIT);
-  TCCR1A = 0;                    // prescaler 1:256, WGM = 4 (CTC)
-  TCCR1B = 1<<WGM12 | 1<<CS12;   //
-  OCR1A = 20;
   TCNT1 = 0;
+  OCR1A = 80;
+  TCCR1A = 0;                              // prescaler 1:64, WGM = 4 (CTC)
+  TCCR1B = 1<<WGM12 | 1<<CS11 | 1<<CS10;   //
   TIMSK1 = 1<<OCIE1A;
 }
 
