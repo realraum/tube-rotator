@@ -90,8 +90,11 @@ static inline void stepper_handle(void)
   STEPPER_PORT = (STEPPER_PORT & STEPPER_OUTPUT_BITMASK ) | stepper_output;
   step_idx++;
   step_idx %= LENGTH_STEP_TABLE;
-  current_speed = (current_speed < target_speed) ? current_speed + 1 : target_speed;
-  OCR1A = current_speed;
+
+  if(current_speed > target_speed)
+    OCR1A = --current_speed;
+  else if(current_speed < target_speed)
+    OCR1A = ++current_speed;
 }
 
 ISR(TIMER1_COMPA_vect)
