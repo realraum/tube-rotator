@@ -63,7 +63,7 @@ void stepper_start(void)
   STEPPER_PORT |= (1<<STEPPER_ENABLE_A_BIT) | (1<<STEPPER_ENABLE_B_BIT);
   TCCR1A = 0;                    // prescaler 1:256, WGM = 4 (CTC)
   TCCR1B = 1<<WGM12 | 1<<CS12;   //
-  OCR1A = 150;
+  OCR1A = 20;
   TCNT1 = 0;
   TIMSK1 = 1<<OCIE1A;
 }
