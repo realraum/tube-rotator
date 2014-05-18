@@ -52,8 +52,12 @@ uint8_t step_table [] =
 #define LENGTH_STEP_TABLE (sizeof(step_table)/sizeof(uint8_t))
 #define STEPPER_OUTPUT_BITMASK (~(0xF << STEPPER_FIRST_BIT ))
 
+uint16_t target_speed;
+uint16_t current_speed;
+
 void stepper_init(void)
 {
+  target_speed = STEPPER_DEFAULT_SPEED;
   STEPPER_PORT &= ~(0xF << STEPPER_FIRST_BIT | 1<<STEPPER_ENABLE_A_BIT | 1<<STEPPER_ENABLE_B_BIT);
   STEPPER_DDR |= (0xF << STEPPER_FIRST_BIT) | (1<<STEPPER_ENABLE_A_BIT) | (1<<STEPPER_ENABLE_B_BIT);
   stepper_stop();
@@ -61,9 +65,10 @@ void stepper_init(void)
 
 void stepper_start(void)
 {
+  current_speed = STEPPER_MIN_SPEED;
   STEPPER_PORT |= (1<<STEPPER_ENABLE_A_BIT) | (1<<STEPPER_ENABLE_B_BIT);
   TCNT1 = 0;
-  OCR1A = 80;
+  OCR1A = current_speed;
   TCCR1A = 0;                              // prescaler 1:64, WGM = 4 (CTC)
   TCCR1B = 1<<WGM12 | 1<<CS11 | 1<<CS10;   //
   TIMSK1 = 1<<OCIE1A;
@@ -85,9 +90,27 @@ static inline void stepper_handle(void)
   STEPPER_PORT = (STEPPER_PORT & STEPPER_OUTPUT_BITMASK ) | stepper_output;
   step_idx++;
   step_idx %= LENGTH_STEP_TABLE;
+  current_speed = (current_speed < target_speed) ? current_speed + 1 : target_speed;
+  OCR1A = current_speed;
 }
 
 ISR(TIMER1_COMPA_vect)
 {
   stepper_handle();
+}
+
+void stepper_set_speed(uint16_t new_speed)
+{
+  if(new_speed >= STEPPER_MIN_SPEED && new_speed <= STEPPER_MAX_SPEED)
+    target_speed = new_speed;
+}
+
+void stepper_inc_speed(void)
+{
+  target_speed = (target_speed >= STEPPER_MAX_SPEED) ? target_speed : target_speed + 1;
+}
+
+void stepper_dec_speed(void)
+{
+  target_speed = (target_speed <= STEPPER_MIN_SPEED) ? target_speed : target_speed - 1;
 }

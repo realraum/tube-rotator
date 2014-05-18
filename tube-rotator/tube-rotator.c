@@ -48,6 +48,12 @@ void handle_cmd(uint8_t cmd)
              stepper_stop();
              led_off();
              break;
+    case '+':
+             stepper_inc_speed();
+             break;
+    case '-':
+             stepper_dec_speed();
+             break;
     default: printf("Error(cmd): unknown command %02X '%c'\r\n", cmd, cmd); return;
   }
 }
