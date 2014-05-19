@@ -97,18 +97,18 @@ ISR(TIMER1_COMPA_vect)
 
 void stepper_set_speed(uint16_t new_speed)
 {
-  if(new_speed >= STEPPER_SPEED_MIN && new_speed <= STEPPER_SPEED_MAX)
+  if(new_speed <= STEPPER_SPEED_MIN && new_speed >= STEPPER_SPEED_MAX)
     target_speed = new_speed;
 }
 
 void stepper_inc_speed(void)
 {
-  target_speed = (target_speed >= STEPPER_SPEED_MAX) ? target_speed : target_speed + 1;
+  target_speed = (target_speed <= STEPPER_SPEED_MAX) ? STEPPER_SPEED_MAX : target_speed - 1;
 }
 
 void stepper_dec_speed(void)
 {
-  target_speed = (target_speed <= STEPPER_SPEED_MIN) ? target_speed : target_speed - 1;
+  target_speed = (target_speed >= STEPPER_SPEED_MIN) ? STEPPER_SPEED_MIN : target_speed + 1;
 }
 
 uint16_t stepper_get_speed(void)
