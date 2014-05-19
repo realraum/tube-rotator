@@ -39,5 +39,6 @@ void stepper_stop(void);
 void stepper_set_speed(uint16_t new_speed);
 void stepper_inc_speed(void);
 void stepper_dec_speed(void);
+uint16_t stepper_get_speed(void);
 
 #endif

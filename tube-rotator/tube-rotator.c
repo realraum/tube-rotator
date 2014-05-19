@@ -47,6 +47,7 @@ void handle_cmd(uint8_t cmd)
     case '3': stepper_set_speed(STEPPER_SPEED_180RPM); break;
     default: printf("Error(cmd): unknown command %02X '%c'\r\n", cmd, cmd); return;
   }
+  printf("current speed: %d \r", stepper_get_speed());
 }
 
 int main(void)

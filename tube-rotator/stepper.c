@@ -110,3 +110,8 @@ void stepper_dec_speed(void)
 {
   target_speed = (target_speed <= STEPPER_SPEED_MIN) ? target_speed : target_speed - 1;
 }
+
+uint16_t stepper_get_speed(void)
+{
+  return target_speed;
+}
