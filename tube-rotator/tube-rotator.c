@@ -37,23 +37,14 @@
 void handle_cmd(uint8_t cmd)
 {
   switch(cmd) {
-    case '!':
-             reset2bootloader();
-             break;
-    case 'r':
-             led_on();
-             stepper_start();
-             break;
-    case 's':
-             stepper_stop();
-             led_off();
-             break;
-    case '+':
-             stepper_inc_speed();
-             break;
-    case '-':
-             stepper_dec_speed();
-             break;
+    case '!': reset2bootloader(); break;
+    case 'r': led_on(); stepper_start(); break;
+    case 's': stepper_stop(); led_off(); break;
+    case '+': stepper_inc_speed(); break;
+    case '-': stepper_dec_speed(); break;
+    case '1': stepper_set_speed(STEPPER_SPEED_60RPM); break;
+    case '2': stepper_set_speed(STEPPER_SPEED_120RPM); break;
+    case '3': stepper_set_speed(STEPPER_SPEED_180RPM); break;
     default: printf("Error(cmd): unknown command %02X '%c'\r\n", cmd, cmd); return;
   }
 }

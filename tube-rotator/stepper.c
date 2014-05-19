@@ -27,13 +27,6 @@
 
 uint8_t step_table [] =
 {
-    /* full steps */
-  /* 6,  // 0110 */
-  /* 5,  // 0101 */
-  /* 9,  // 1001 */
-  /* 10, // 1010 */
-
-    /* half steps */
   2,  // 0010
   6,  // 0110
   4,  // 0100
@@ -57,7 +50,7 @@ uint16_t current_speed;
 
 void stepper_init(void)
 {
-  target_speed = STEPPER_DEFAULT_SPEED;
+  target_speed = STEPPER_SPEED_DEFAULT;
   STEPPER_PORT &= ~(0xF << STEPPER_FIRST_BIT | 1<<STEPPER_ENABLE_A_BIT | 1<<STEPPER_ENABLE_B_BIT);
   STEPPER_DDR |= (0xF << STEPPER_FIRST_BIT) | (1<<STEPPER_ENABLE_A_BIT) | (1<<STEPPER_ENABLE_B_BIT);
   stepper_stop();
@@ -65,7 +58,7 @@ void stepper_init(void)
 
 void stepper_start(void)
 {
-  current_speed = STEPPER_MIN_SPEED;
+  current_speed = STEPPER_SPEED_MIN;
   STEPPER_PORT |= (1<<STEPPER_ENABLE_A_BIT) | (1<<STEPPER_ENABLE_B_BIT);
   TCNT1 = 0;
   OCR1A = current_speed;
@@ -104,16 +97,16 @@ ISR(TIMER1_COMPA_vect)
 
 void stepper_set_speed(uint16_t new_speed)
 {
-  if(new_speed >= STEPPER_MIN_SPEED && new_speed <= STEPPER_MAX_SPEED)
+  if(new_speed >= STEPPER_SPEED_MIN && new_speed <= STEPPER_SPEED_MAX)
     target_speed = new_speed;
 }
 
 void stepper_inc_speed(void)
 {
-  target_speed = (target_speed >= STEPPER_MAX_SPEED) ? target_speed : target_speed + 1;
+  target_speed = (target_speed >= STEPPER_SPEED_MAX) ? target_speed : target_speed + 1;
 }
 
 void stepper_dec_speed(void)
 {
-  target_speed = (target_speed <= STEPPER_MIN_SPEED) ? target_speed : target_speed - 1;
+  target_speed = (target_speed <= STEPPER_SPEED_MIN) ? target_speed : target_speed - 1;
 }

@@ -23,9 +23,14 @@
 #ifndef R3TUBE_stepper_h_INCLUDED
 #define R3TUBE_stepper_h_INCLUDED
 
-#define STEPPER_MIN_SPEED 800
-#define STEPPER_DEFAULT_SPEED 200
-#define STEPPER_MAX_SPEED 80
+#define STEPPER_SPEED_MIN 500
+#define STEPPER_SPEED_MAX 80
+
+#define STEPPER_SPEED_60RPM 311
+#define STEPPER_SPEED_120RPM 155
+#define STEPPER_SPEED_180RPM 103
+
+#define STEPPER_SPEED_DEFAULT STEPPER_SPEED_120RPM
 
 void stepper_init(void);
 void stepper_start(void);
