@@ -23,6 +23,7 @@
 #include <avr/sfr_defs.h>
 #include <avr/interrupt.h>
 #include <util/atomic.h>
+#include <math.h>
 
 #include "stepper.h"
 
@@ -124,4 +125,9 @@ void stepper_dec_speed(void)
 uint16_t stepper_get_speed(void)
 {
   return target_speed;
+}
+
+uint8_t stepper_get_speed_rpm(void)
+{
+  return (uint8_t)lround( ( (double)F_CPU / (double)(51200 * (target_speed + 1) ) ) * 60.0 );
 }
