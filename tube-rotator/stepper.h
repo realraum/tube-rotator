@@ -23,8 +23,8 @@
 #ifndef R3TUBE_stepper_h_INCLUDED
 #define R3TUBE_stepper_h_INCLUDED
 
-#define STEPPER_SPEED_MIN 1000
-#define STEPPER_SPEED_MAX 150
+#define STEPPER_SPEED_MIN 950
+#define STEPPER_SPEED_MAX 149
 
 #define STEPPER_SPEED_20RPM 936
 #define STEPPER_SPEED_30RPM 624
@@ -46,6 +46,6 @@ void stepper_set_speed(uint16_t new_speed);
 void stepper_inc_speed(void);
 void stepper_dec_speed(void);
 uint16_t stepper_get_speed(void);
-uint8_t stepper_get_speed_rpm(void);
+uint16_t stepper_get_speed_rpm(void);
 
 #endif
