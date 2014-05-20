@@ -49,6 +49,7 @@ uint8_t step_table [] =
 
 volatile uint16_t target_speed;
 uint16_t current_speed;
+uint8_t running;
 
 void stepper_init(void)
 {
@@ -60,6 +61,8 @@ void stepper_init(void)
 
 void stepper_start(void)
 {
+  if(running) return;
+
   current_speed = STEPPER_SPEED_MIN;
   STEPPER_PORT |= (1<<STEPPER_ENABLE_A_BIT) | (1<<STEPPER_ENABLE_B_BIT);
   TCNT1 = 0;
@@ -67,6 +70,7 @@ void stepper_start(void)
   TCCR1A = 0;                              // prescaler 1:64, WGM = 4 (CTC)
   TCCR1B = 1<<WGM12 | 1<<CS11 | 1<<CS10;   //
   TIMSK1 = 1<<OCIE1A;
+  running = 1;
 }
 
 void stepper_stop(void)
@@ -74,6 +78,7 @@ void stepper_stop(void)
   STEPPER_PORT &= ~(0xF << STEPPER_FIRST_BIT | 1<<STEPPER_ENABLE_A_BIT | 1<<STEPPER_ENABLE_B_BIT);
   TCCR1B = 0; // no clock source
   TIMSK1 = 0; // disable timer interrupt
+  running = 0;
 }
 
 static inline void stepper_handle(void)
