@@ -132,7 +132,12 @@ uint16_t stepper_get_speed(void)
   return target_speed;
 }
 
-uint16_t stepper_get_speed_rpm(void)
+void stepper_set_speed_rpm(uint8_t new_rpm)
 {
-  return (uint16_t)lround( ( (double)F_CPU / (double)(64.0 * 800.0 * (double)(target_speed + 1) ) ) * 60.0 );
+  stepper_set_speed(( (uint16_t)( (double)(60.0 * F_CPU) / (double)(64.0 * 800.0 * (double)new_rpm) ) ) - 1);
+}
+
+uint8_t stepper_get_speed_rpm(void)
+{
+  return (uint8_t)lround( ( (double)F_CPU / (double)(64.0 * 800.0 * (double)(target_speed + 1) ) ) * 60.0 );
 }
