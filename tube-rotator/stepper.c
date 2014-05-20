@@ -22,6 +22,7 @@
 
 #include <avr/sfr_defs.h>
 #include <avr/interrupt.h>
+#include <util/atomic.h>
 
 #include "stepper.h"
 
@@ -45,7 +46,7 @@ uint8_t step_table [] =
 #define LENGTH_STEP_TABLE (sizeof(step_table)/sizeof(uint8_t))
 #define STEPPER_OUTPUT_BITMASK (~(0xF << STEPPER_FIRST_BIT ))
 
-uint16_t target_speed;
+volatile uint16_t target_speed;
 uint16_t current_speed;
 
 void stepper_init(void)
@@ -84,10 +85,12 @@ static inline void stepper_handle(void)
   step_idx++;
   step_idx %= LENGTH_STEP_TABLE;
 
-  if(current_speed > target_speed)
-    OCR1A = --current_speed;
-  else if(current_speed < target_speed)
-    OCR1A = ++current_speed;
+  if(step_idx != 0 && step_idx % 8) {
+    if(current_speed > target_speed)
+      OCR1A = --current_speed;
+    else if(current_speed < target_speed)
+      OCR1A = ++current_speed;
+  }
 }
 
 ISR(TIMER1_COMPA_vect)
@@ -97,18 +100,25 @@ ISR(TIMER1_COMPA_vect)
 
 void stepper_set_speed(uint16_t new_speed)
 {
-  if(new_speed <= STEPPER_SPEED_MIN && new_speed >= STEPPER_SPEED_MAX)
-    target_speed = new_speed;
+  if(new_speed <= STEPPER_SPEED_MIN && new_speed >= STEPPER_SPEED_MAX) {
+    ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+      target_speed = new_speed;
+    }
+  }
 }
 
 void stepper_inc_speed(void)
 {
-  target_speed = (target_speed <= STEPPER_SPEED_MAX) ? STEPPER_SPEED_MAX : target_speed - 1;
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+    target_speed = (target_speed <= STEPPER_SPEED_MAX) ? STEPPER_SPEED_MAX : target_speed - 1;
+  }
 }
 
 void stepper_dec_speed(void)
 {
-  target_speed = (target_speed >= STEPPER_SPEED_MIN) ? STEPPER_SPEED_MIN : target_speed + 1;
+  ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
+    target_speed = (target_speed >= STEPPER_SPEED_MIN) ? STEPPER_SPEED_MIN : target_speed + 1;
+  }
 }
 
 uint16_t stepper_get_speed(void)

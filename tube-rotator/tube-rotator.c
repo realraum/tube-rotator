@@ -42,9 +42,15 @@ void handle_cmd(uint8_t cmd)
     case 's': stepper_stop(); led_off(); break;
     case '+': stepper_inc_speed(); break;
     case '-': stepper_dec_speed(); break;
-    case '1': stepper_set_speed(STEPPER_SPEED_60RPM); break;
-    case '2': stepper_set_speed(STEPPER_SPEED_120RPM); break;
-    case '3': stepper_set_speed(STEPPER_SPEED_180RPM); break;
+    case '2': stepper_set_speed(STEPPER_SPEED_20RPM); break;
+    case '3': stepper_set_speed(STEPPER_SPEED_30RPM); break;
+    case '4': stepper_set_speed(STEPPER_SPEED_40RPM); break;
+    case '5': stepper_set_speed(STEPPER_SPEED_50RPM); break;
+    case '6': stepper_set_speed(STEPPER_SPEED_60RPM); break;
+    case '7': stepper_set_speed(STEPPER_SPEED_70RPM); break;
+    case '8': stepper_set_speed(STEPPER_SPEED_80RPM); break;
+    case '9': stepper_set_speed(STEPPER_SPEED_90RPM); break;
+    case '0': stepper_set_speed(STEPPER_SPEED_100RPM); break;
     default: printf("Error(cmd): unknown command %02X '%c'\r\n", cmd, cmd); return;
   }
   printf("current speed: %4d \r", stepper_get_speed());
