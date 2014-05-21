@@ -23,10 +23,10 @@
 #ifndef R3TUBE_stepper_h_INCLUDED
 #define R3TUBE_stepper_h_INCLUDED
 
-#define STEPPER_SPEED_MIN 950
+#define STEPPER_SPEED_MIN 699
 #define STEPPER_SPEED_MAX 149
+//#define STEPPER_SPEED_MAX 74
 
-#define STEPPER_SPEED_20RPM 936
 #define STEPPER_SPEED_30RPM 624
 #define STEPPER_SPEED_40RPM 468
 #define STEPPER_SPEED_50RPM 374
@@ -38,9 +38,13 @@
 
 #define STEPPER_SPEED_DEFAULT STEPPER_SPEED_60RPM
 
+typedef enum { stepper_stopped = 0, stepper_running = 1 } stepper_state_t;
+
 void stepper_init(void);
 void stepper_start(void);
 void stepper_stop(void);
+stepper_state_t stepper_get_state(void);
+const char* stepper_state_to_string(stepper_state_t state);
 
 void stepper_set_speed(uint16_t new_speed);
 void stepper_inc_speed(void);
@@ -49,5 +53,7 @@ uint16_t stepper_get_speed(void);
 
 void stepper_set_speed_rpm(uint8_t new_rpm);
 uint8_t stepper_get_speed_rpm(void);
+void stepper_inc_speed_rpm(void);
+void stepper_dec_speed_rpm(void);
 
 #endif

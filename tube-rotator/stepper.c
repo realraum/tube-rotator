@@ -49,7 +49,7 @@ uint8_t step_table [] =
 
 volatile uint16_t target_speed;
 uint16_t current_speed;
-uint8_t running;
+stepper_state_t current_state;
 
 void stepper_init(void)
 {
@@ -61,7 +61,7 @@ void stepper_init(void)
 
 void stepper_start(void)
 {
-  if(running) return;
+  if(current_state == stepper_running) return;
 
   current_speed = STEPPER_SPEED_MIN;
   STEPPER_PORT |= (1<<STEPPER_ENABLE_A_BIT) | (1<<STEPPER_ENABLE_B_BIT);
@@ -70,7 +70,7 @@ void stepper_start(void)
   TCCR1A = 0;                              // prescaler 1:64, WGM = 4 (CTC)
   TCCR1B = 1<<WGM12 | 1<<CS11 | 1<<CS10;   //
   TIMSK1 = 1<<OCIE1A;
-  running = 1;
+  current_state = stepper_running;
 }
 
 void stepper_stop(void)
@@ -78,7 +78,7 @@ void stepper_stop(void)
   STEPPER_PORT &= ~(0xF << STEPPER_FIRST_BIT | 1<<STEPPER_ENABLE_A_BIT | 1<<STEPPER_ENABLE_B_BIT);
   TCCR1B = 0; // no clock source
   TIMSK1 = 0; // disable timer interrupt
-  running = 0;
+  current_state = stepper_stopped;
 }
 
 static inline void stepper_handle(void)
@@ -102,6 +102,20 @@ static inline void stepper_handle(void)
 ISR(TIMER1_COMPA_vect)
 {
   stepper_handle();
+}
+
+stepper_state_t stepper_get_state(void)
+{
+  return current_state;
+}
+
+const char* stepper_state_to_string(stepper_state_t state)
+{
+  switch(state) {
+    case stepper_running: return "running";
+    case stepper_stopped: return "stopped";
+  }
+  return "?";
 }
 
 void stepper_set_speed(uint16_t new_speed)
@@ -134,10 +148,22 @@ uint16_t stepper_get_speed(void)
 
 void stepper_set_speed_rpm(uint8_t new_rpm)
 {
-  stepper_set_speed(( (uint16_t)( (double)(60.0 * F_CPU) / (double)(64.0 * 800.0 * (double)new_rpm) ) ) - 1);
+  stepper_set_speed(( (uint16_t)lround( (double)(60.0 * F_CPU) / (double)(64.0 * 800.0 * (double)new_rpm) ) ) - 1);
 }
 
 uint8_t stepper_get_speed_rpm(void)
 {
   return (uint8_t)lround( ( (double)F_CPU / (double)(64.0 * 800.0 * (double)(target_speed + 1) ) ) * 60.0 );
+}
+
+void stepper_inc_speed_rpm(void)
+{
+  uint8_t rpm = stepper_get_speed_rpm();
+  stepper_set_speed_rpm((rpm >= 255) ? 255 : rpm+1);
+}
+
+void stepper_dec_speed_rpm(void)
+{
+  uint8_t rpm = stepper_get_speed_rpm();
+  stepper_set_speed_rpm((rpm <= 1) ? 1 : rpm-1);
 }
