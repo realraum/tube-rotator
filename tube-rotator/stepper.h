@@ -23,18 +23,18 @@
 #ifndef R3TUBE_stepper_h_INCLUDED
 #define R3TUBE_stepper_h_INCLUDED
 
-#define STEPPER_SPEED_MIN 699
-#define STEPPER_SPEED_MAX 149
-//#define STEPPER_SPEED_MAX 74
+#define STEPPER_SPEED_MIN 150
+#define STEPPER_SPEED_MAX 700
+#define STEPPER_SPEED_CONVERT_VALUE (uint32_t)(105000)
 
-#define STEPPER_SPEED_30RPM 624
-#define STEPPER_SPEED_40RPM 468
-#define STEPPER_SPEED_50RPM 374
-#define STEPPER_SPEED_60RPM 312
-#define STEPPER_SPEED_70RPM 267
-#define STEPPER_SPEED_80RPM 233
-#define STEPPER_SPEED_90RPM 207
-#define STEPPER_SPEED_100RPM 187
+#define STEPPER_SPEED_30RPM 168
+#define STEPPER_SPEED_40RPM 224
+#define STEPPER_SPEED_50RPM 281
+#define STEPPER_SPEED_60RPM 336
+#define STEPPER_SPEED_70RPM 393
+#define STEPPER_SPEED_80RPM 451
+#define STEPPER_SPEED_90RPM 507
+#define STEPPER_SPEED_100RPM 561
 
 #define STEPPER_SPEED_DEFAULT STEPPER_SPEED_60RPM
 
@@ -51,9 +51,9 @@ void stepper_inc_speed(void);
 void stepper_dec_speed(void);
 uint16_t stepper_get_speed(void);
 
-void stepper_set_speed_rpm(uint8_t new_rpm);
-uint8_t stepper_get_speed_rpm(void);
-void stepper_inc_speed_rpm(void);
-void stepper_dec_speed_rpm(void);
+//void stepper_set_speed_rpm(uint8_t new_rpm);
+//uint8_t stepper_get_speed_rpm(void);
+//void stepper_inc_speed_rpm(void);
+//void stepper_dec_speed_rpm(void);
 
 #endif

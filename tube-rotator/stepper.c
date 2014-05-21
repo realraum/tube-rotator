@@ -93,9 +93,9 @@ static inline void stepper_handle(void)
 
   if(step_idx != 0 && step_idx % 8) {
     if(current_speed > target_speed)
-      OCR1A = --current_speed;
+      OCR1A = (uint16_t)(STEPPER_SPEED_CONVERT_VALUE/(--current_speed));
     else if(current_speed < target_speed)
-      OCR1A = ++current_speed;
+      OCR1A = (uint16_t)(STEPPER_SPEED_CONVERT_VALUE/(++current_speed));
   }
 }
 
@@ -120,7 +120,7 @@ const char* stepper_state_to_string(stepper_state_t state)
 
 void stepper_set_speed(uint16_t new_speed)
 {
-  if(new_speed <= STEPPER_SPEED_MIN && new_speed >= STEPPER_SPEED_MAX) {
+  if(new_speed >= STEPPER_SPEED_MIN && new_speed <= STEPPER_SPEED_MAX) {
     ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
       target_speed = new_speed;
     }
@@ -130,14 +130,14 @@ void stepper_set_speed(uint16_t new_speed)
 void stepper_inc_speed(void)
 {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    target_speed = (target_speed <= STEPPER_SPEED_MAX) ? STEPPER_SPEED_MAX : target_speed - 1;
+    target_speed = (target_speed >= STEPPER_SPEED_MAX) ? STEPPER_SPEED_MAX : target_speed + 1;
   }
 }
 
 void stepper_dec_speed(void)
 {
   ATOMIC_BLOCK(ATOMIC_RESTORESTATE) {
-    target_speed = (target_speed >= STEPPER_SPEED_MIN) ? STEPPER_SPEED_MIN : target_speed + 1;
+    target_speed = (target_speed <= STEPPER_SPEED_MIN) ? STEPPER_SPEED_MIN : target_speed - 1;
   }
 }
 
@@ -146,24 +146,24 @@ uint16_t stepper_get_speed(void)
   return target_speed;
 }
 
-void stepper_set_speed_rpm(uint8_t new_rpm)
-{
-  stepper_set_speed(( (uint16_t)lround( (double)(60.0 * F_CPU) / (double)(64.0 * 800.0 * (double)new_rpm) ) ) - 1);
-}
+/* void stepper_set_speed_rpm(uint8_t new_rpm) */
+/* { */
+/*   stepper_set_speed(( (uint16_t)lround( (double)(60.0 * F_CPU) / (double)(64.0 * 800.0 * (double)new_rpm) ) ) - 1); */
+/* } */
 
-uint8_t stepper_get_speed_rpm(void)
-{
-  return (uint8_t)lround( ( (double)F_CPU / (double)(64.0 * 800.0 * (double)(target_speed + 1) ) ) * 60.0 );
-}
+/* uint8_t stepper_get_speed_rpm(void) */
+/* { */
+/*   return (uint8_t)lround( ( (double)F_CPU / (double)(64.0 * 800.0 * (double)(target_speed + 1) ) ) * 60.0 ); */
+/* } */
 
-void stepper_inc_speed_rpm(void)
-{
-  uint8_t rpm = stepper_get_speed_rpm();
-  stepper_set_speed_rpm((rpm >= 255) ? 255 : rpm+1);
-}
+/* void stepper_inc_speed_rpm(void) */
+/* { */
+/*   uint8_t rpm = stepper_get_speed_rpm(); */
+/*   stepper_set_speed_rpm((rpm >= 255) ? 255 : rpm+1); */
+/* } */
 
-void stepper_dec_speed_rpm(void)
-{
-  uint8_t rpm = stepper_get_speed_rpm();
-  stepper_set_speed_rpm((rpm <= 1) ? 1 : rpm-1);
-}
+/* void stepper_dec_speed_rpm(void) */
+/* { */
+/*   uint8_t rpm = stepper_get_speed_rpm(); */
+/*   stepper_set_speed_rpm((rpm <= 1) ? 1 : rpm-1); */
+/* } */
