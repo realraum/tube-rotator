@@ -25,10 +25,11 @@ BOARD_TYPE := teenstep
 OBJ := $(NAME).o stepper.o
 LIBS := util led lufa-descriptor-usbserial anyio
 EXTERNAL_LIBS := lufa
-RESET_FUNC := ../tools/reset_lufa_cdc
+SPREADAVR_PATH := ..
+RESET_FUNC := $(SPREADAVR_PATH)/tools/reset_lufa_cdc
 RESET_PARAM := '!'
 
-LUFA_PATH := ../contrib/LUFA-120219
+LUFA_PATH := $(SPREADAVR_PATH)/contrib/LUFA-120219
 LUFA_OPTS  = -D USB_DEVICE_ONLY
 LUFA_OPTS += -D DEVICE_STATE_AS_GPIOR=0
 LUFA_OPTS += -D ORDERED_EP_CONFIG
@@ -43,4 +44,4 @@ LUFA_OPTS += -D USB_PRODUCT="L\"realraum tube rotator\"" -D USB_PRODUCT_LEN=21
 
 LUFA_COMPONENTS := USB USBCLASS SERIAL
 
-include ../include.mk
+include $(SPREADAVR_PATH)/include.mk
